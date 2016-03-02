@@ -2,13 +2,13 @@
 
 organization := "com.connectifier.xero"
 name := "client"
-version := "0.13"
+version := "0.14"
 
 // Java. Not Scala
 crossPaths := false
 autoScalaLibrary := false
 javacOptions in (Compile, compile) ++= Seq("-source", "1.7", "-target", "1.7")
-javacOptions in (doc) ++= Seq("-source", "1.7", "-Xdoclint:none")
+javacOptions in (doc) ++= Seq("-source", "1.7")
 
 // XJC-plugin settings
 sources in (Compile, xjc) += baseDirectory.value / ".." / ".." / "XeroAPI-Schemas" / "v2.00"
@@ -43,7 +43,7 @@ publishTo := {
     Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 }
 publishArtifact in Test := false
-pomIncludeRepository := { _ => false }
+pomIncludeRepository := { _ => false}
 pomExtra := (
   <url>https://github.com/connectifier/xero-java-client</url>
   <licenses>
