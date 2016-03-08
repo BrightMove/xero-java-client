@@ -35,6 +35,7 @@ import com.connectifier.xeroclient.models.ApiException;
 import com.connectifier.xeroclient.models.ArrayOfBankTransaction;
 import com.connectifier.xeroclient.models.ArrayOfInvoice;
 import com.connectifier.xeroclient.models.ArrayOfManualJournal;
+import com.connectifier.xeroclient.models.ArrayOfPayment;
 import com.connectifier.xeroclient.models.BankTransaction;
 import com.connectifier.xeroclient.models.BankTransfer;
 import com.connectifier.xeroclient.models.BrandingTheme;
@@ -336,6 +337,10 @@ public class XeroClient {
 		return put("Receipts", objFactory.createReceipt(receipt)).getReceipts();
 	}
 
+	public List<Payment> createPayment(Payment payment) {
+		return put("Payments", objFactory.createPayment(payment)).getPayments();
+	}
+
 	public List<Item> createItem(Item item) {
 		return put("Items", objFactory.createItem(item)).getItems();
 	}
@@ -348,6 +353,12 @@ public class XeroClient {
 		ArrayOfInvoice array = new ArrayOfInvoice();
 		array.getInvoice().addAll(invoices);
 		return put("Invoices", objFactory.createInvoices(array)).getInvoices();
+	}
+
+	public List<Payment> createPayments(List<Payment> payments) {
+		ArrayOfPayment array = new ArrayOfPayment();
+		array.getPayment().addAll(payments);
+		return put("Payments", objFactory.createPayments(array)).getPayments();
 	}
 
 	public Item getItem(String id) {
