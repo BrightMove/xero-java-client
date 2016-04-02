@@ -141,10 +141,31 @@ public class XeroClient {
 	}
 
 	protected ResponseType put(String endPoint, JAXBElement<?> object) {
+		return put(endPoint, object, false);
+	}
+
+	protected ResponseType put(String endPoint, JAXBElement<?> object, boolean includeSummarizeErrors) {
 		OAuthRequest request = new OAuthRequest(Verb.PUT, BASE_URL + endPoint);
 		String contents = marshallRequest(object);
 		request.setCharset("UTF-8");
 		request.addBodyParameter("xml", contents);
+
+		/*
+		 * This seems counter-intuitive but here are the docs (http://developer.xero.com/documentation/api/invoices/#put)
+		 * 
+		 * Passing "false" apparently adds the status attribute to the return type
+		 * 
+		 * Snippet as of 4/2/16
+		 * 
+		 * If you are entering many invoices in a single API call then we recommend you utilise our new response format 
+		 * that shows validation errors for each invoice. The new response messages for validating bulk API calls would
+		 * mean a breaking change so to utilise this functionality you’ll need to append ?SummarizeErrors=false to the 
+		 * end of your API calls e.g. POST /api.xro/2.0/Invoices?SummarizeErrors=false
+		 */
+		if (includeSummarizeErrors) {
+			request.addQuerystringParameter("SummarizeErrors", "false");
+		}
+
 		service.signRequest(token, request);
 		Response response = request.send();
 		if (response.getCode() != 200) {
@@ -352,7 +373,7 @@ public class XeroClient {
 	public List<Invoice> createInvoices(List<Invoice> invoices) {
 		ArrayOfInvoice array = new ArrayOfInvoice();
 		array.getInvoice().addAll(invoices);
-		return put("Invoices", objFactory.createInvoices(array)).getInvoices();
+		return put("Invoices", objFactory.createInvoices(array), true).getInvoices();
 	}
 
 	public List<Payment> createPayments(List<Payment> payments) {

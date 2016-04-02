@@ -6,7 +6,7 @@
 	<artifactId>client</artifactId>
 	<packaging>jar</packaging>
 	<description>client</description>
-	<version>0.14</version>
+	<version>0.15</version>
 	<name>client</name>
 	<organization>
 		<name>com.connectifier.xero</name>
