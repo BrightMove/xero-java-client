@@ -33,6 +33,7 @@ import org.scribe.oauth.OAuthService;
 import com.connectifier.xeroclient.models.Account;
 import com.connectifier.xeroclient.models.ApiException;
 import com.connectifier.xeroclient.models.ArrayOfBankTransaction;
+import com.connectifier.xeroclient.models.ArrayOfContact;
 import com.connectifier.xeroclient.models.ArrayOfInvoice;
 import com.connectifier.xeroclient.models.ArrayOfManualJournal;
 import com.connectifier.xeroclient.models.ArrayOfPayment;
@@ -354,6 +355,10 @@ public class XeroClient {
 		return put("Invoices", objFactory.createInvoice(invoice)).getInvoices();
 	}
 
+	public List<Contact> createContact(Contact contact) {
+		return put("Contacts", objFactory.createContact(contact)).getContacts();
+	}
+
 	public List<Receipt> createReceipt(Receipt receipt) {
 		return put("Receipts", objFactory.createReceipt(receipt)).getReceipts();
 	}
@@ -374,6 +379,12 @@ public class XeroClient {
 		ArrayOfInvoice array = new ArrayOfInvoice();
 		array.getInvoice().addAll(invoices);
 		return put("Invoices", objFactory.createInvoices(array), true).getInvoices();
+	}
+
+	public List<Contact> createContacts(List<Contact> contacts) {
+		ArrayOfContact array = new ArrayOfContact();
+		array.getContact().addAll(contacts);
+		return put("Contacts", objFactory.createContacts(array), true).getContacts();
 	}
 
 	public List<Payment> createPayments(List<Payment> payments) {
