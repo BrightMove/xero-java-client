@@ -129,10 +129,31 @@ public class XeroClient {
 	}
 
 	protected ResponseType post(String endPoint, JAXBElement<?> object) {
+		return post(endPoint, object, false);
+	}
+
+	protected ResponseType post(String endPoint, JAXBElement<?> object, boolean includeSummarizeErrors) {
 		OAuthRequest request = new OAuthRequest(Verb.POST, BASE_URL + endPoint);
 		String contents = marshallRequest(object);
 		request.setCharset("UTF-8");
 		request.addBodyParameter("xml", contents);
+
+		/*
+		 * This seems counter-intuitive but here are the docs (http://developer.xero.com/documentation/api/invoices/#put)
+		 * 
+		 * Passing "false" apparently adds the status attribute to the return type
+		 * 
+		 * Snippet as of 4/2/16
+		 * 
+		 * If you are entering many invoices in a single API call then we recommend you utilise our new response format 
+		 * that shows validation errors for each invoice. The new response messages for validating bulk API calls would
+		 * mean a breaking change so to utilise this functionality you’ll need to append ?SummarizeErrors=false to the 
+		 * end of your API calls e.g. POST /api.xro/2.0/Invoices?SummarizeErrors=false
+		 */
+		if (includeSummarizeErrors) {
+			request.addQuerystringParameter("SummarizeErrors", "false");
+		}
+
 		service.signRequest(token, request);
 		Response response = request.send();
 		if (response.getCode() != 200) {
@@ -359,6 +380,10 @@ public class XeroClient {
 		return put("Contacts", objFactory.createContact(contact)).getContacts();
 	}
 
+	public List<Contact> upsertContact(Contact contact) {
+		return post("Contacts", objFactory.createContact(contact)).getContacts();
+	}
+
 	public List<Receipt> createReceipt(Receipt receipt) {
 		return put("Receipts", objFactory.createReceipt(receipt)).getReceipts();
 	}
@@ -385,6 +410,12 @@ public class XeroClient {
 		ArrayOfContact array = new ArrayOfContact();
 		array.getContact().addAll(contacts);
 		return put("Contacts", objFactory.createContacts(array), true).getContacts();
+	}
+
+	public List<Contact> upsertContacts(List<Contact> contacts) {
+		ArrayOfContact array = new ArrayOfContact();
+		array.getContact().addAll(contacts);
+		return post("Contacts", objFactory.createContacts(array), true).getContacts();
 	}
 
 	public List<Payment> createPayments(List<Payment> payments) {
